@@ -1,16 +1,28 @@
-name: Hello World Action
+name: github action # Name of the workflow
 
-on:
-  push:   # This will run the action whenever you push to the repo
-    branches:
+on: # Defines what will trigger the workflow
+  push: # This will run the action whenever you push to the repo
+    branches: # Makes sure the workflow runs whenever something is pushed to certain branches
       - master
 
-jobs:
-  hello-world:
-    runs-on: ubuntu-latest
+jobs: # What should the workflow do?
+  ci: # Name of the workflow
+    runs-on: ubuntu-latest 
     steps:
-      - name: Checkout repository
+      # Step 1: Print random message
+      - name: hello-world
+        run: echo "Hello world"
+
+      # Step 2: Clone the repository  
+      - name: checkout-repository
         uses: actions/checkout@v3
 
-      - name: Say Hello
-        run: echo "Hello world"
+      # Step 3: Build the docker image
+      - name: docker-build
+        run: docker build -t roman-api .
+
+      # Step 4: Push the docker image
+      - name: docker-push
+        run: docker push europe-west4-docker.pkg.dev/ae-terraform-2025/ae-2025-registry/ad-image
+
+
