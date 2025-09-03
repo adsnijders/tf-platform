@@ -26,7 +26,7 @@ jobs: # What should the workflow do?
       # # Step 3: Build the docker image
       # - name: docker-build
       #   run: docker build -t roman-api .
-      #   run: docker builld -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest .
+      #   run: docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest .
 
       # # Step 4: Tag the docker image
       # - name: docker-tag
@@ -50,7 +50,7 @@ jobs: # What should the workflow do?
           IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
         run: |
           echo "Building image: $IMAGE"
-          docker builld -t $IMAGE .
+          docker build -t $IMAGE .
           docker push $IMAGE
 
 
