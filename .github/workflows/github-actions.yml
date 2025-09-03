@@ -21,7 +21,11 @@ jobs: # What should the workflow do?
       - name: docker-build
         run: docker build -t roman-api .
 
-      # Step 4: Push the docker image
+      # Step 4: Tag the docker image
+      - name: docker-tag
+        run: docker tag roman-conv-pkg-roman-conv europe-west4-docker.pkg.dev/ae-terraform-2025/ae-2025-registry/ad-image:latest
+
+      # Step 5: Push the docker image
       - name: docker-push
         run: docker push europe-west4-docker.pkg.dev/ae-terraform-2025/ae-2025-registry/ad-image
 
