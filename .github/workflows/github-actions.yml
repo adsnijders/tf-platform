@@ -21,15 +21,21 @@ jobs: # What should the workflow do?
       - name: docker-build
         run: docker build -t roman-api .
 
-      # Step 4: Authenticate to configure docker
-      - name: configure-docker
-        run: gcloud auth configure-docker europe-west4-docker.pkg.dev
-
       # Step 4: Tag the docker image
       - name: docker-tag
         run: docker tag roman-api europe-west4-docker.pkg.dev/ae-terraform-2025/ae-2025-registry/ad-image:latest
 
-      # Step 5: Push the docker image
+      # Step 5: Authenticate with service account key
+      - name: gcp-authenticate
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'        
+
+      # Step 6: Authenticate to configure docker
+      - name: configure-docker
+        run: gcloud auth configure-docker europe-west4-docker.pkg.dev --quiet        
+
+      # Step 7: Push the docker image
       - name: docker-push
         run: docker push europe-west4-docker.pkg.dev/ae-terraform-2025/ae-2025-registry/ad-image
 

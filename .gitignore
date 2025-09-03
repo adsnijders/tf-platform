@@ -223,4 +223,7 @@ terraform.rc
 pyvenv.cfg
 pip-selfcheck.json
 
+### GCP ###
+key.json
+
 # End of https://www.toptal.com/developers/gitignore/api/python,terraform,dotenv,venv
