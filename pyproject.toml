@@ -1,0 +1,23 @@
+[project]
+name = "roman_api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "psycopg2-binary",
+    "python-dotenv",
+    "numpy",
+    "roman_converter @ git+https://github.com/adsnijders/number_converter.git"
+]
+
+[tool.hatch.build]
+packages = ["src/roman_api"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references=true
