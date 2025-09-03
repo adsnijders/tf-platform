@@ -21,6 +21,10 @@ jobs: # What should the workflow do?
       - name: docker-build
         run: docker build -t roman-api .
 
+      # Step 4: Authenticate to configure docker
+      - name: configure-docker
+        run: gcloud auth configure-docker europe-west4-docker.pkg.dev
+
       # Step 4: Tag the docker image
       - name: docker-tag
         run: docker tag roman-api europe-west4-docker.pkg.dev/ae-terraform-2025/ae-2025-registry/ad-image:latest
