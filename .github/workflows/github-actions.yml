@@ -1,0 +1,16 @@
+name: Hello World Action
+
+on:
+  push:   # This will run the action whenever you push to the repo
+    branches:
+      - master
+
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Say Hello
+        run: echo "Hello world"
