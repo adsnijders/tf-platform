@@ -16,7 +16,7 @@ jobs: # What should the workflow do?
     runs-on: ubuntu-latest 
     steps:
       # Step 1: Clone the repository  
-      - name: Checkout repository
+      - name: Repository checkout
         uses: actions/checkout@v3
 
       # Step 2: Authenticate with service account key
@@ -26,7 +26,7 @@ jobs: # What should the workflow do?
           credentials_json: '${{ secrets.GCP_SA_KEY }}'        
 
       # Step 3: Authenticate to configure docker
-      - name: Configuring docker
+      - name: Docker configuration
         run: |
           echo "Configuring docker"
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet        
@@ -41,14 +41,14 @@ jobs: # What should the workflow do?
           echo "Pusing image: $IMAGE"
           docker push $IMAGE
 
-      # Step 5: Setup Terraform
-      - name: Setup Terraform
+      # Step 5: Setting up Terraform
+      - name: Terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.13.1  # <-- match the version you want
 
       # Step 6: Initializing and planning Terrafrom
-      - name: Initializing and planning Terraform
+      - name: Terraform init and plan
         run: |
           echo "Initializing Terraform"
           terraform init
