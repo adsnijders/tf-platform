@@ -19,19 +19,45 @@ jobs: # What should the workflow do?
       - name: Repository checkout
         uses: actions/checkout@v3
 
-      # Step 2: Authenticate with service account key
+      # # Step 2: Set up python
+      # - name: Set up python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: '3.11'
+
+      # Step 3: Install formatting and linting dependencies
+      - name: Install formatting and linting dependencies
+        run: |
+          echo "Installing formatting and linting dependencies"
+          pip install black flake8
+
+      # Step 4: Run Python formatting
+      - name: Run Python formatting (Black)
+        run: |
+          echo "Running Black..."
+          black --check .
+
+      # Step 5: Run Python linting
+      - name: Run Python linting (Flake8)
+        run: |
+          echo "Running Flake8..."
+          flake8 .
+
+      # Step 6: Testing
+
+      # Step 7: Authenticate with service account key
       - name: GCP authentication
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'        
 
-      # Step 3: Authenticate to configure docker
+      # Step 8: Authenticate to configure docker
       - name: Docker configuration
         run: |
           echo "Configuring docker"
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet        
 
-      # Step 4: Build and push the docker image
+      # Step 9: Build and push the docker image
       - name: Docker Build and Push
         env: 
           IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
@@ -41,13 +67,13 @@ jobs: # What should the workflow do?
           echo "Pusing image: $IMAGE"
           docker push $IMAGE
 
-      # Step 5: Setting up Terraform
+      # Step 10: Setting up Terraform
       - name: Terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.13.1  # <-- match the version you want
 
-      # Step 6: Initializing and planning Terrafrom
+      # Step 11: Initializing and planning Terrafrom
       - name: Terraform init and plan
         run: |
           echo "Initializing Terraform"
