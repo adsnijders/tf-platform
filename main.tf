@@ -44,6 +44,12 @@ resource "google_sql_database_instance" "instance" {
   deletion_protection = false
 }
 
+resource "google_sql_user" "user" {
+  name      = var.db_username
+  instance  = google_sql_database_instance.instance.name
+  password  = var.db_password
+}
+
 # ---------------------------
 # Resource: Cloud Run Service V2
 # ---------------------------
@@ -56,6 +62,31 @@ resource "google_cloud_run_v2_service" "api_service" {
   template {
     containers {
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.artifact_repo_id}/${var.image_name}:latest"
+      
+      env {
+        name  = "POSTGRES_HOST"
+        value = google_sql_database_instance.instance.public_ip_address
+      }
+
+      env {
+        name  = "POSTGRES_PORT"
+        value = "5432"
+      }
+
+      env {
+        name  = "POSTGRES_NAME"
+        value = google_sql_database_instance.instance.name
+      }
+      
+      env {
+        name  = "POSTGRES_USER"
+        value = google_sql_user.user.name
+      }
+
+      env {
+        name  = "POSTGRES_PASSWORD"
+        value = google_sql_user.user.password
+      }            
     }
   }
 }

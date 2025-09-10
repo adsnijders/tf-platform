@@ -84,5 +84,6 @@ jobs: # What should the workflow do?
           terraform init
           echo "Planning Terraform"
           terraform plan
-
+          echo "Applying Terraform"
+          terraform apply -auto-approve -var "db_password=${{ secrets.DB_PASSWORD}}"
 
