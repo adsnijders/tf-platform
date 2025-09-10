@@ -5,9 +5,6 @@ on: # Defines what will trigger the workflow
     branches: # Makes sure the workflow runs whenever something is pushed to certain branches
       - master
 
-permissions:
-  contents: write
-
 env:  # Workflow-wide variables
   PROJECT_ID: ae-terraform-2025
   REGION: europe-west4
@@ -32,13 +29,13 @@ jobs: # What should the workflow do?
       - name: Run Python formatting (black)
         run: |
           echo "Running black..."
-          black .
+          black --check .
 
       # Step 4: Run Python linting (ruff)
       - name: Run Python linting (ruff)
         run: |
           echo "Running ruff..."
-          ruff check --fix .
+          ruff check .
 
       # Step 5: Auto-commit changes
       - name: Auto-commit changes
