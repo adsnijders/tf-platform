@@ -22,6 +22,13 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references=true
 
+[project.optional-dependencies]
+ci = [
+    "pytest>=7.0", 
+    "black>=24.0", 
+    "ruff>=0.0.300"
+]
+
 [tool.black]
 line-length = 88
 target-version = ["py312"]
@@ -31,7 +38,12 @@ target-version = ["py312"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-lint.select = ["E", "F", "I", "B"]
+lint.select = [
+    "E", 
+    "F", 
+    "I", 
+    "B"
+]
 lint.ignore = ["E501"]
 # Optional: fix issues automatically
 # fix = true
