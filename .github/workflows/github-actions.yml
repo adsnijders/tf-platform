@@ -75,10 +75,11 @@ jobs: # What should the workflow do?
       - name: Terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.13.1  # <-- match the version you want
+          terraform_version: 1.12.2  # <-- match the version you want
 
       # Step 11: Initializing and planning Terrafrom
       - name: Terraform init and plan
+        working-directory: ./
         run: |
           echo "Initializing Terraform"
           terraform init
