@@ -26,7 +26,8 @@ allow-direct-references=true
 ci = [
     "pytest>=7.0", 
     "black>=24.0", 
-    "ruff>=0.0.300"
+    "ruff>=0.0.300",
+    "commitizen>=3.0.0"
 ]
 
 [tool.black]
@@ -48,3 +49,8 @@ lint.ignore = ["E501"]
 # Optional: fix issues automatically
 # fix = true
 # unsafe-fixes = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$major.$minor.$patch"
