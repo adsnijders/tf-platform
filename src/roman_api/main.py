@@ -193,12 +193,12 @@ def val_ar_inp(ar_inp: str | int) -> None:
     # The input must be an integer or a string convertible to an integer
     try:
         ar_inp = int(ar_inp.lower().strip())
-    except ValueError:
-        raise print("Input must be an integer or a string convertible to an integer")
+    except Exception as e:
+        raise TypeError("Input must be an integer or a string convertible to an integer") from e
     
     # inp_nr cannot be negative
     if ar_inp <= 0 or ar_inp >= 4000:
-        raise print("Roman numerals must be positive integers and below 4000")
+        raise ValueError("Roman numerals must be positive integers and below 4000")
     
     return ar_inp
 
