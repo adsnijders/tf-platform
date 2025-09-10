@@ -29,7 +29,7 @@ jobs: # What should the workflow do?
       - name: Run Python formatting (black)
         run: |
           echo "Running black..."
-          black --check --diff .
+          black --check --diff --color .
 
       # Step 4: Run Python linting (ruff)
       - name: Run Python linting (ruff)
