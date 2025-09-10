@@ -29,7 +29,7 @@ def get_db_connection():
         return conn
     
     except Exception as e:
-        raise str(e)
+        raise RuntimeError("Could not connect to the database") from e
         
 # --- Creating the table that stores the rom-ar key-value pairs and retrieving them ---
 
@@ -100,7 +100,7 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
         print(f"✅ Values ({inp}, {out}) have been inserted into table roman.")
 
     except Exception as e:
-        raise str(e)  
+        raise RuntimeError(f"Could not insert ({inp}, {out})") from e  
 
 # Define Roman to Arabic mapping
 rom_to_ar = {
@@ -126,24 +126,24 @@ def val_rom_inp(rom_inp) -> None:
     """
     # The input must be a string
     if not isinstance(rom_inp, str):
-        raise print("Input must be a string")
+        raise TypeError("Input must be a string")
     
     # Convert the input to lowercase
     rom_inp = rom_inp.lower()
     
     # Reject more than 3 of the same numeral in a row
     if re.search(r"(i{4,}|x{4,}|c{4,}|m{4,})", rom_inp):
-        raise print("Invalid Roman numeral: cannot repeat the same numeral for more than three times")
+        raise ValueError("Invalid Roman numeral: cannot repeat the same numeral for more than three times")
     
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
-        raise print("Input contains invalid Roman numeral")
+        raise ValueError("Input contains invalid Roman numeral")
 
 # Initiate the app
 app = FastAPI()  
 
 @app.post("/rom-to-ar/{inp}")
-def get_output(inp):
+def get_ar_output(inp):
     """
     1. Validate the roman input
     2. Tries to create a connection to postgres.
@@ -203,7 +203,7 @@ def val_ar_inp(ar_inp: str | int) -> None:
     return ar_inp
 
 @app.post("/ar-to-rom/{inp}")
-def get_output(inp):
+def get_rom_output(inp):
     """
     1. Validate the arabic input
     2. Tries to create a connection to postgres.

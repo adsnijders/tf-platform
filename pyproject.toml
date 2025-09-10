@@ -31,8 +31,8 @@ target-version = ["py312"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-select = ["E", "F", "I", "B"]
-ignore = ["E501"]
+lint.select = ["E", "F", "I", "B"]
+lint.ignore = ["E501"]
 # Optional: fix issues automatically
 # fix = true
 # unsafe-fixes = true
