@@ -35,43 +35,37 @@ jobs: # What should the workflow do?
           black .
 
       # Step 4: Run Python linting (ruff)
-      - name: Run Python linting (flake8)
+      - name: Run Python linting (ruff)
         run: |
-          echo "Running flake8..."
+          echo "Running ruff..."
           ruff check --fix .
-      
-      # Step 5: Configure git to allow merging
-      - name: Configure git to allow merging
-        run: |
-          echo "Configuring git to allow merging"
-          git config --global pull.rebase false
 
-      # Step 6: Auto-commit changes
+      # Step 5: Auto-commit changes
       - name: Auto-commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "style: auto-format code with black and ruff"  
           # push: true  
 
-      # Step 7: Testing
+      # Step 6: Testing
       - name: Run tests
         run: |
           echo "Running tests from test.py"
           pytest -v
 
-      # Step 8: Authenticate with service account key
+      # Step 7: Authenticate with service account key
       - name: GCP authentication
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'        
 
-      # Step 9: Authenticate to configure docker
+      # Step 8: Authenticate to configure docker
       - name: Docker configuration
         run: |
           echo "Configuring docker"
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet        
 
-      # Step 10: Build and push the docker image
+      # Step 9: Build and push the docker image
       - name: Docker Build and Push
         env: 
           IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
@@ -81,13 +75,13 @@ jobs: # What should the workflow do?
           echo "Pusing image: $IMAGE"
           docker push $IMAGE
 
-      # Step 11: Setting up Terraform
+      # Step 10: Setting up Terraform
       - name: Terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.13.1  # <-- match the version you want
 
-      # Step 12: Initializing and planning Terrafrom
+      # Step 11: Initializing and planning Terrafrom
       - name: Terraform init and plan
         run: |
           echo "Initializing Terraform"
