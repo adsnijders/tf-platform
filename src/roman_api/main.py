@@ -62,7 +62,7 @@ def init_db() -> None:
         print("✅ Table 'roman' checked / created.")
 
     except Exception as e:
-        raise RuntimeError(f"Table 'roman' could not be checked / created") from e
+        raise RuntimeError("Table 'roman' could not be checked / created") from e
 
 
 # Define a function get the value from postgres-db when the key exists
