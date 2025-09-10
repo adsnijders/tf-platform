@@ -23,19 +23,25 @@ jobs: # What should the workflow do?
       - name: Install formatting and linting dependencies
         run: |
           echo "Installing formatting and linting dependencies"
-          pip install black flake8
+          pip install black ruff
 
-      # Step 3: Run Python formatting
-      - name: Run Python formatting (Black)
+      # Step 3: Run Python formatting (black)
+      - name: Run Python formatting (black)
         run: |
-          echo "Running Black..."
-          black --check --diff --color .
+          echo "Running black..."
+          black .
 
-      # Step 4: Run Python linting
-      - name: Run Python linting (Flake8)
+      # Step 4: Run Python linting (ruff)
+      - name: Run Python linting (flake8)
         run: |
-          echo "Running Flake8..."
-          flake8 .
+          echo "Running flake8..."
+          ruff check --fix .
+
+      # Step 5: Auto-commit changes
+      - name: Auto-commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-format code with black and ruff"  
 
       # Step 5: Testing
 

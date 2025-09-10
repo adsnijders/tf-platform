@@ -21,3 +21,18 @@ build-backend = "hatchling.build"
 
 [tool.hatch.metadata]
 allow-direct-references=true
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+# skip-string-normalization = false is default
+# include = "src/roman_api/**/*.py"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+select = ["E", "F", "I", "B"]
+ignore = ["E501"]
+# Optional: fix issues automatically
+# fix = true
+# unsafe-fixes = true
