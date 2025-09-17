@@ -1,8 +1,11 @@
 name: github action # Name of the workflow
 
 on: # Defines what will trigger the workflow
-  push: # This will run the action whenever you push to the repo
-    branches: # Makes sure the workflow runs whenever something is pushed to certain branches
+  # push: # This will run the action whenever you push to the repo
+  #   branches: # Makes sure the workflow runs whenever something is pushed to certain branches
+  #     - master
+  pull_request:
+    branches:
       - master
 
 env:  # Workflow-wide variables
@@ -27,18 +30,21 @@ jobs: # What should the workflow do?
 
       # Step 3: Conventional commit check
       - name: Conventional commit check
+        if: github.event_name == 'pull_request'
         run: |
           echo "Checking for conventional commit"
           cz check --message "$(git log -1 --pretty=%B)"
 
       # Step 4: Run Python formatting (black)
       - name: Run Python formatting (black)
+        if: github.event_name == 'pull_request'
         run: |
           echo "Running black..."
           black --check --diff --color .
 
       # Step 5: Run Python linting (ruff)
       - name: Run Python linting (ruff)
+        if: github.event_name == 'pull_request'
         run: |
           echo "Running ruff..."
           ruff check .
