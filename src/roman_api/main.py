@@ -14,7 +14,7 @@ from roman_converter.cli import ar_to_rom_conv, rom_to_ar_conv
 
 
 # Function for creating the postgres-db connection
-def get_db_connection():
+def get_db_connection() -> None: 
     """
     Connects to the postgres db.
     """
