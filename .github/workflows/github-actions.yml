@@ -75,7 +75,7 @@ jobs: # What should the workflow do?
       - name: Terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.12.2  # <-- match the version you want
+          terraform_version: 1.12.2 # <- match the version you want
 
       # Step 11: Initializing, planning and applying Terrafrom
       - name: Terraform init, plan, and apply
