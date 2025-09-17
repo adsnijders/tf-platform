@@ -65,16 +65,6 @@ resource "google_cloud_run_v2_service" "api_service" {
   template {
     containers {
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.artifact_repo_id}/${var.image_name}:latest"
-      
-      # env {
-      #   name  = "POSTGRES_HOST"
-      #   value = google_sql_database_instance.instance.public_ip_address 
-      # }
-
-      # env {
-      #   name  = "POSTGRES_PORT"
-      #   value = 5432
-      # }
 
       env {
         name  = "POSTGRES_NAME"
