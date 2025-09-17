@@ -186,8 +186,9 @@ def get_ar_output(inp):
     """
     1. Validate the roman input
     2. Tries to create a connection to postgres.
-    3. Tries to find inp in the postgres-db and immediately return the associated value.
-    4. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    3. Checks if table roman exists.
+    4. Tries to find inp in the postgres-db and immediately return the associated value.
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
     """
     # --- 1. Validate the roman input ---
 
@@ -229,8 +230,9 @@ def get_rom_output(inp):
     """
     1. Validate the arabic input
     2. Tries to create a connection to postgres.
-    3. Tries to find inp in the postgres-db and immediately return the associated value.
-    4. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    3. Checks if table roman exists.
+    4. Tries to find inp in the postgres-db and immediately return the associated value.
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
     """
     # --- 1. Validate the roman input ---
 
