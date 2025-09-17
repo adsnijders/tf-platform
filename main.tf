@@ -98,7 +98,12 @@ resource "google_cloud_run_v2_service" "api_service" {
     }
 
     # Enable Cloud SQL Auth Proxy
-    cloud_sql_instances = [google_sql_database_instance.instance.connection_name]
+    volumes {
+      name = "cloudsql"
+      cloud_sql_instance {
+        instances = [google_sql_database_instance.instance.connection_name]
+      }
+    }
   }
 }
 
