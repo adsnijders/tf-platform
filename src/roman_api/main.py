@@ -20,7 +20,7 @@ def get_db_connection():
     """
     try:
         conn = psycopg2.connect(
-            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket; POSTGRES_NAME
+            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket; POSTGRES_NAME 
             # port=os.getenv("POSTGRES_PORT"),
             dbname=os.getenv("POSTGRES_NAME"),
             user=os.getenv("POSTGRES_USER"),
@@ -110,7 +110,7 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
 # Define a function to validate the Roman input
 def val_rom_inp(rom_inp: str) -> None:
     """
-    Validate the input for rom_to_ar_conv
+    Validates the input for rom_to_ar_conv.
     """
     # The input must be a string
     if not isinstance(rom_inp, str):
@@ -133,7 +133,7 @@ def val_rom_inp(rom_inp: str) -> None:
 # Define a function to validate the Arabic input
 def val_ar_inp(ar_inp: str | int) -> None:
     """
-    Validate the input for ar_to_rom_conv
+    Validates the input for ar_to_rom_conv.
     """
     # The input must be an integer or a string convertible to an integer
     try:
@@ -162,11 +162,11 @@ app = FastAPI()
 @app.post("/rom-to-ar/{inp}")
 def get_ar_output(inp):
     """
-    1. Validate the roman input
+    1. Validate the roman input.
     2. Tries to create a connection to postgres.
     3. Checks if table roman exists.
     4. Tries to find inp in the postgres-db and immediately return the associated value.
-    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion.
     """
     # --- 1. Validate the roman input ---
 
@@ -206,11 +206,11 @@ def get_ar_output(inp):
 @app.post("/ar-to-rom/{inp}")
 def get_rom_output(inp):
     """
-    1. Validate the arabic input
+    1. Validate the arabic input.
     2. Tries to create a connection to postgres.
     3. Checks if table roman exists.
     4. Tries to find inp in the postgres-db and immediately return the associated value.
-    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion.
     """
     # --- 1. Validate the roman input ---
 
