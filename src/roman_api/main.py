@@ -103,7 +103,9 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str) -> None:
         print(f"✅ Values ({inp}, {out}) have been inserted into table roman!")
 
     except Exception as e:
-        raise RuntimeError(f"❌ Could not insert ({inp}, {out}) into table roman!") from e
+        raise RuntimeError(
+            f"❌ Could not insert ({inp}, {out}) into table roman!"
+        ) from e
 
 
 # --- Creating functions that validate input ---
