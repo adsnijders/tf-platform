@@ -10,8 +10,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from roman_converter.cli import ar_to_rom_conv, rom_to_ar_conv
 
-# --- Creating DB Connection ---
-
+# --- Creating a function to establish a DB Connection ---
 
 # Function for creating the postgres-db connection
 def get_db_connection():
@@ -33,8 +32,7 @@ def get_db_connection():
         raise RuntimeError("Could not connect to the database") from e
 
 
-# --- Creating the table that stores the rom-ar key-value pairs and retrieving them ---
-
+# --- Creating functions that create a table that stores key-value pairs, post to it, and retrieve them ---
 
 # Function for creating a table in postgres
 def init_db() -> None:
@@ -112,6 +110,8 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
         raise RuntimeError(f"Could not insert ({inp}, {out})") from e
 
 
+# --- Create mappings ---
+
 # Define Roman to Arabic mapping
 rom_to_ar = {
     "i": 1,
@@ -129,9 +129,13 @@ rom_to_ar = {
     "m": 1000,
 }
 
+# Define Arabic to Roman mapping
+ar_to_rom = {ar_nr: rom_nr for rom_nr, ar_nr in rom_to_ar.items()}
+
+# --- Creating functions that validate input ---
 
 # Define a function to validate the Roman input
-def val_rom_inp(rom_inp) -> None:
+def val_rom_inp(rom_inp: str) -> None:
     """
     Validate the input for rom_to_ar_conv
     """
@@ -151,12 +155,36 @@ def val_rom_inp(rom_inp) -> None:
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
         raise ValueError("Input contains invalid Roman numeral")
+    
 
+# Define a function to validate the Arabic input
+def val_ar_inp(ar_inp: str | int) -> None:
+    """
+    Validate the input for ar_to_rom_conv
+    """
+    # The input must be an integer or a string convertible to an integer
+    try:
+        ar_inp = int(ar_inp.lower().strip())
+    except Exception as e:
+        raise TypeError(
+            "Input must be an integer or a string convertible to an integer"
+        ) from e
+
+    # inp_nr cannot be negative
+    if ar_inp <= 0 or ar_inp >= 4000:
+        raise ValueError("Roman numerals must be positive integers and below 4000")
+
+    return ar_inp
+
+
+# --- Initiating the app ---
 
 # Initiate the app
 app = FastAPI()
 
+# --- Create the API functions that put it all together ---
 
+# Roman to Arabic
 @app.post("/rom-to-ar/{inp}")
 def get_ar_output(inp):
     """
@@ -196,32 +224,7 @@ def get_ar_output(inp):
     return JSONResponse(content={"Arabic number": conv})
 
 
-# --- Create mappings ---
-
-# Define Arabic to Roman mapping
-ar_to_rom = {ar_nr: rom_nr for rom_nr, ar_nr in rom_to_ar.items()}
-
-
-# Define a function to validate the Arabic input
-def val_ar_inp(ar_inp: str | int) -> None:
-    """
-    Validate the input for ar_to_rom_conv
-    """
-    # The input must be an integer or a string convertible to an integer
-    try:
-        ar_inp = int(ar_inp.lower().strip())
-    except Exception as e:
-        raise TypeError(
-            "Input must be an integer or a string convertible to an integer"
-        ) from e
-
-    # inp_nr cannot be negative
-    if ar_inp <= 0 or ar_inp >= 4000:
-        raise ValueError("Roman numerals must be positive integers and below 4000")
-
-    return ar_inp
-
-
+# Arabic to Roman
 @app.post("/ar-to-rom/{inp}")
 def get_rom_output(inp):
     """
