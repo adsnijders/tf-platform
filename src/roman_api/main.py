@@ -20,14 +20,14 @@ def get_db_connection():
     """
     try:
         conn = psycopg2.connect(
-            host=os.getenv("POSTGRES_HOST"),
-            port=os.getenv("POSTGRES_PORT"),
+            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket
+            # port=os.getenv("POSTGRES_PORT"),
             dbname=os.getenv("POSTGRES_NAME"),
             user=os.getenv("POSTGRES_USER"),
             password=os.getenv("POSTGRES_PASSWORD"),
         )
 
-        return conn
+        return conn, conn.cursor()
 
     except Exception as e:
         raise RuntimeError("Could not connect to the database") from e
@@ -37,15 +37,11 @@ def get_db_connection():
 
 
 # Function for creating a table in postgres
-def init_db() -> None:
+def init_db(conn, cur) -> None:
     """
     Checks if table "roman" exists. If not, the tables is created.
     """
     try:
-        conn = get_db_connection()
-
-        cur = conn.cursor()
-
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS roman (
@@ -56,10 +52,6 @@ def init_db() -> None:
         )
 
         conn.commit()
-
-        cur.close()
-
-        conn.close()
         print("✅ Table 'roman' checked / created.")
 
     except Exception as e:
@@ -194,8 +186,9 @@ def get_ar_output(inp):
     """
     1. Validate the roman input
     2. Tries to create a connection to postgres.
-    3. Tries to find inp in the postgres-db and immediately return the associated value.
-    4. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    3. Checks if table roman exists.
+    4. Tries to find inp in the postgres-db and immediately return the associated value.
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
     """
     # --- 1. Validate the roman input ---
 
@@ -203,10 +196,13 @@ def get_ar_output(inp):
 
     # --- 2. Connect to postgres ---
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+    conn, cur = get_db_connection()
 
-    # --- 3. Try to find inp in postgres-db
+    # --- 3. Check if table roman exists
+
+    init_db(conn, cur)
+
+    # --- 4. Try to find inp in postgres-db
 
     inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
@@ -215,7 +211,7 @@ def get_ar_output(inp):
         print(f"Arabic number: {db_value}")
         return JSONResponse(content={"Arabic number": db_value})
 
-    # --- 4. Convert the input, post the input-output in postgres-db and return the conversion
+    # --- 5. Convert the input, post the input-output in postgres-db and return the conversion
 
     conv = rom_to_ar_conv(inp)
 
@@ -234,8 +230,9 @@ def get_rom_output(inp):
     """
     1. Validate the arabic input
     2. Tries to create a connection to postgres.
-    3. Tries to find inp in the postgres-db and immediately return the associated value.
-    4. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    3. Checks if table roman exists.
+    4. Tries to find inp in the postgres-db and immediately return the associated value.
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
     """
     # --- 1. Validate the roman input ---
 
@@ -243,10 +240,13 @@ def get_rom_output(inp):
 
     # --- 2. Connect to postgres ---
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+    conn, cur = get_db_connection()
 
-    # --- 3. Try to find inp in postgres-db
+    # --- 3. Check if table roman exists
+
+    init_db(conn, cur)
+
+    # --- 4. Try to find inp in postgres-db
 
     inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
@@ -255,7 +255,7 @@ def get_rom_output(inp):
         print(f"Roman number: {db_value}")
         return JSONResponse(content={"Roman number": db_value})
 
-    # --- 4. Convert the input, post the input-output in postgres-db and return the conversion
+    # --- 5. Convert the input, post the input-output in postgres-db and return the conversion
 
     conv = ar_to_rom_conv(inp)
 

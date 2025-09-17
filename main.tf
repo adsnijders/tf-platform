@@ -66,19 +66,19 @@ resource "google_cloud_run_v2_service" "api_service" {
     containers {
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.artifact_repo_id}/${var.image_name}:latest"
       
-      env {
-        name  = "POSTGRES_HOST"
-        value = google_sql_database_instance.instance.public_ip_address
-      }
+      # env {
+      #   name  = "POSTGRES_HOST"
+      #   value = google_sql_database_instance.instance.public_ip_address 
+      # }
 
-      env {
-        name  = "POSTGRES_PORT"
-        value = 5432
-      }
+      # env {
+      #   name  = "POSTGRES_PORT"
+      #   value = 5432
+      # }
 
       env {
         name  = "POSTGRES_NAME"
-        value = google_sql_database_instance.instance.name
+        value = google_sql_database.database.name
       }
       
       env {
@@ -90,6 +90,24 @@ resource "google_cloud_run_v2_service" "api_service" {
         name  = "POSTGRES_PASSWORD"
         value = google_sql_user.user.password
       }            
+
+      env {
+        name  = "INSTANCE_CONNECTION_NAME"
+        value = google_sql_database_instance.instance.connection_name
+      }
+
+      volume_mounts {
+        name = "cloudsql"
+        mount_path = "/cloudsql"
+      }
+    }
+
+    # Enable Cloud SQL Auth Proxy
+    volumes {
+      name = "cloudsql"
+      cloud_sql_instance {
+        instances = [google_sql_database_instance.instance.connection_name]
+      }
     }
   }
 }
