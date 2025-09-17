@@ -104,5 +104,6 @@ resource "google_cloud_run_service_iam_binding" "binding" {
   role      = "roles/run.invoker"
   members   = [
     "user:asnijders@xccelerated.io",
+    "user:gclark@xccelerated.io"
   ]
 }
