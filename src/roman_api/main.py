@@ -233,7 +233,7 @@ def get_rom_output(inp):
 
     # --- 4. Try to find inp in postgres-db
 
-    db_value = get_value_if_key_exists(cur, inp)
+    db_value = get_value_if_key_exists(cur, str(inp))
     if db_value:
         print(f"Roman number: {db_value}")
         return JSONResponse(content={"Roman number": db_value})
@@ -242,7 +242,7 @@ def get_rom_output(inp):
 
     conv = ar_to_rom_conv(inp)
 
-    post_value_if_key_does_not_exist(conn, cur, inp, conv)
+    post_value_if_key_does_not_exist(conn, cur, str(inp), conv)
 
     cur.close()
     conn.close()
@@ -253,10 +253,10 @@ def get_rom_output(inp):
 
 # Main guard
 if __name__ == "__main__":
-    # app()
+    app()
 
-    # Tests
-    rom_to_ar = rom_to_ar_conv("CX")
-    print(type(rom_to_ar), rom_to_ar)
-    ar_to_rom = ar_to_rom_conv(100)
-    print(type(ar_to_rom), ar_to_rom)
+    # # Checks
+    # rom_to_ar = rom_to_ar_conv("CX")
+    # print(type(rom_to_ar), rom_to_ar)
+    # ar_to_rom = ar_to_rom_conv(100)
+    # print(type(ar_to_rom), ar_to_rom)
