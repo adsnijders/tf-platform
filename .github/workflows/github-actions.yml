@@ -73,8 +73,8 @@ jobs: # What should the workflow do?
           IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
         run: |
           echo "Building image: $IMAGE"
-          docker build -t $IMAGE .
-          echo "Pusing image: $IMAGE"
+          docker build --no-cache -t $IMAGE .
+          echo "Pushing image: $IMAGE"
           docker push $IMAGE
 
       # Step 10: Setting up Terraform
