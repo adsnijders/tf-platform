@@ -27,10 +27,11 @@ def get_db_connection() -> None:
             password=os.getenv("POSTGRES_PASSWORD"),
         )
 
+        print("✅ Succesfully connected to the database")
         return conn, conn.cursor()
 
     except Exception as e:
-        raise RuntimeError("Could not connect to the database") from e
+        raise RuntimeError("❌ Could not connect to the database!") from e
 
 
 # --- Creating functions that create a table that stores key-value pairs, post to it, and retrieve them ---
@@ -52,10 +53,10 @@ def init_db(conn, cur) -> None:
         )
 
         conn.commit()
-        print("✅ Table 'roman' checked / created.")
+        print("✅ Table 'roman' checked / created!")
 
     except Exception as e:
-        raise RuntimeError("Table 'roman' could not be checked / created") from e
+        raise RuntimeError("❌ Table 'roman' could not be checked / created!") from e
 
 
 # Define a function get the value from postgres-db when the key exists
@@ -77,14 +78,15 @@ def get_value_if_key_exists(cur, inp: str | int) -> None | str:
     rows = cur.fetchall()
 
     if len(rows) > 0:
-        # print(rows)
+        print(f"✅ Key {inp} was found in table roman!")
         return rows[0][0]
     else:
+        print(f"❌ Key {inp} was NOT found in table roman!")
         return None
 
 
 # Define a function that posts the key-value pair into postgres-db
-def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
+def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str) -> None:
     """
     Inserts the key-value pair in postgres-db.
     """
@@ -98,10 +100,10 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
             (inp, out),
         )
         conn.commit()
-        print(f"✅ Values ({inp}, {out}) have been inserted into table roman.")
+        print(f"✅ Values ({inp}, {out}) have been inserted into table roman!")
 
     except Exception as e:
-        raise RuntimeError(f"Could not insert ({inp}, {out})") from e
+        raise RuntimeError(f"❌ Could not insert ({inp}, {out})!") from e
 
 
 # --- Creating functions that validate input ---
@@ -114,7 +116,7 @@ def val_rom_inp(rom_inp: str) -> None:
     """
     # The input must be a string
     if not isinstance(rom_inp, str):
-        raise TypeError("Input must be a string")
+        raise TypeError("❌ Input must be a string!")
 
     # Convert the input to lowercase
     rom_inp = rom_inp.lower()
@@ -122,12 +124,12 @@ def val_rom_inp(rom_inp: str) -> None:
     # Reject more than 3 of the same numeral in a row
     if re.search(r"(i{4,}|x{4,}|c{4,}|m{4,})", rom_inp):
         raise ValueError(
-            "Invalid Roman numeral: cannot repeat the same numeral for more than three times"
+            "❌ Invalid Roman numeral: cannot repeat the same numeral for more than three times!"
         )
 
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
-        raise ValueError("Input contains invalid Roman numeral")
+        raise ValueError("❌ Input contains invalid Roman numeral!")
 
 
 # Define a function to validate the Arabic input
@@ -140,12 +142,12 @@ def val_ar_inp(ar_inp: str | int) -> None:
         ar_inp = int(ar_inp.lower().strip())
     except Exception as e:
         raise TypeError(
-            "Input must be an integer or a string convertible to an integer"
+            "❌ Input must be an integer or a string convertible to an integer!"
         ) from e
 
     # inp_nr cannot be negative
     if ar_inp <= 0 or ar_inp >= 4000:
-        raise ValueError("Roman numerals must be positive integers and below 4000")
+        raise ValueError("❌ Roman numerals must be positive integers and below 4000!")
 
     return ar_inp
 
@@ -185,14 +187,12 @@ def get_ar_output(inp):
     inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
     if db_value:
-        print(f"Key {inp} is found in postgres")
         print(f"Arabic number: {db_value}")
         return JSONResponse(content={"Arabic number": db_value})
 
     # --- 5. Convert the input, post the input-output in postgres-db and return the conversion
 
     conv = rom_to_ar_conv(inp)
-    print(conv)
 
     post_value_if_key_does_not_exist(conn, cur, inp, conv)
 
@@ -230,14 +230,12 @@ def get_rom_output(inp):
     inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
     if db_value:
-        print(f"Key {inp} is found in postgres")
         print(f"Roman number: {db_value}")
         return JSONResponse(content={"Roman number": db_value})
 
     # --- 5. Convert the input, post the input-output in postgres-db and return the conversion
 
     conv = ar_to_rom_conv(inp)
-    print(conv)
 
     post_value_if_key_does_not_exist(conn, cur, inp, conv)
 
@@ -251,3 +249,9 @@ def get_rom_output(inp):
 # Main guard
 if __name__ == "__main__":
     app()
+
+    # # Tests
+    # rom_to_ar = rom_to_ar_conv("CX")
+    # print(rom_to_ar)
+    # ar_to_rom = ar_to_rom_conv(100)
+    # print(ar_to_rom)
