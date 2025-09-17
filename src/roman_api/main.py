@@ -27,7 +27,7 @@ def get_db_connection() -> None:
             password=os.getenv("POSTGRES_PASSWORD"),
         )
 
-        print("✅ Succesfully connected to the database")
+        print("✅ Succesfully connected to the database!")
         return conn, conn.cursor()
 
     except Exception as e:
@@ -40,7 +40,7 @@ def get_db_connection() -> None:
 # Function for creating a table in postgres
 def init_db(conn, cur) -> None:
     """
-    Checks if table "roman" exists. If not, the tables is created.
+    Checks if table "roman" exists. If not, the table is created.
     """
     try:
         cur.execute(
@@ -103,14 +103,14 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str) -> None:
         print(f"✅ Values ({inp}, {out}) have been inserted into table roman!")
 
     except Exception as e:
-        raise RuntimeError(f"❌ Could not insert ({inp}, {out})!") from e
+        raise RuntimeError(f"❌ Could not insert ({inp}, {out}) into table roman!") from e
 
 
 # --- Creating functions that validate input ---
 
 
 # Define a function to validate the Roman input
-def val_rom_inp(rom_inp: str) -> None:
+def val_rom_inp(rom_inp: str) -> str:
     """
     Validates the input for rom_to_ar_conv.
     """
@@ -119,7 +119,7 @@ def val_rom_inp(rom_inp: str) -> None:
         raise TypeError("❌ Input must be a string!")
 
     # Convert the input to lowercase
-    rom_inp = rom_inp.lower()
+    rom_inp = rom_inp.lower().strip()
 
     # Reject more than 3 of the same numeral in a row
     if re.search(r"(i{4,}|x{4,}|c{4,}|m{4,})", rom_inp):
@@ -130,16 +130,20 @@ def val_rom_inp(rom_inp: str) -> None:
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
         raise ValueError("❌ Input contains invalid Roman numeral!")
+    
+    # Input is valid
+    print("✅ Input is valid!")
+    return rom_inp
 
 
 # Define a function to validate the Arabic input
-def val_ar_inp(ar_inp: str | int) -> None:
+def val_ar_inp(ar_inp: str | int) -> int:
     """
     Validates the input for ar_to_rom_conv.
     """
     # The input must be an integer or a string convertible to an integer
     try:
-        ar_inp = int(ar_inp.lower().strip())
+        ar_inp = int(str(ar_inp).lower().strip())
     except Exception as e:
         raise TypeError(
             "❌ Input must be an integer or a string convertible to an integer!"
@@ -149,6 +153,7 @@ def val_ar_inp(ar_inp: str | int) -> None:
     if ar_inp <= 0 or ar_inp >= 4000:
         raise ValueError("❌ Roman numerals must be positive integers and below 4000!")
 
+    print("✅ Input is valid!")
     return ar_inp
 
 
@@ -172,7 +177,7 @@ def get_ar_output(inp):
     """
     # --- 1. Validate the roman input ---
 
-    val_rom_inp(inp)
+    inp = val_rom_inp(inp)
 
     # --- 2. Connect to postgres ---
 
@@ -184,7 +189,6 @@ def get_ar_output(inp):
 
     # --- 4. Try to find inp in postgres-db
 
-    inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
     if db_value:
         print(f"Arabic number: {db_value}")
@@ -215,7 +219,7 @@ def get_rom_output(inp):
     """
     # --- 1. Validate the roman input ---
 
-    val_ar_inp(inp)
+    inp = val_ar_inp(inp)
 
     # --- 2. Connect to postgres ---
 
@@ -227,7 +231,6 @@ def get_rom_output(inp):
 
     # --- 4. Try to find inp in postgres-db
 
-    inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
     if db_value:
         print(f"Roman number: {db_value}")
@@ -248,10 +251,10 @@ def get_rom_output(inp):
 
 # Main guard
 if __name__ == "__main__":
-    app()
+    # app()
 
-    # # Tests
-    # rom_to_ar = rom_to_ar_conv("CX")
-    # print(rom_to_ar)
-    # ar_to_rom = ar_to_rom_conv(100)
-    # print(ar_to_rom)
+    # Tests
+    rom_to_ar = rom_to_ar_conv("CX")
+    print(type(rom_to_ar), rom_to_ar)
+    ar_to_rom = ar_to_rom_conv(100)
+    print(type(ar_to_rom), ar_to_rom)
