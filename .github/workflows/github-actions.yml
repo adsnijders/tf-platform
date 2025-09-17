@@ -67,7 +67,7 @@ jobs: # What should the workflow do?
           echo "Configuring docker"
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet        
 
-      # Step 9: Build and push the docker image
+      # Step 9: Build and push the docker image (I added --no-cache later)
       - name: Docker Build and Push
         env: 
           IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
