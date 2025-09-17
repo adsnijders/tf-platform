@@ -12,6 +12,7 @@ from roman_converter.cli import ar_to_rom_conv, rom_to_ar_conv
 
 # --- Creating a function to establish a DB Connection ---
 
+
 # Function for creating the postgres-db connection
 def get_db_connection():
     """
@@ -33,6 +34,7 @@ def get_db_connection():
 
 
 # --- Creating functions that create a table that stores key-value pairs, post to it, and retrieve them ---
+
 
 # Function for creating a table in postgres
 def init_db() -> None:
@@ -134,6 +136,7 @@ ar_to_rom = {ar_nr: rom_nr for rom_nr, ar_nr in rom_to_ar.items()}
 
 # --- Creating functions that validate input ---
 
+
 # Define a function to validate the Roman input
 def val_rom_inp(rom_inp: str) -> None:
     """
@@ -156,6 +159,7 @@ def val_rom_inp(rom_inp: str) -> None:
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
         raise ValueError("Input contains invalid Roman numeral")
     
+
 
 # Define a function to validate the Arabic input
 def val_ar_inp(ar_inp: str | int) -> None:
@@ -183,6 +187,7 @@ def val_ar_inp(ar_inp: str | int) -> None:
 app = FastAPI()
 
 # --- Create the API functions that put it all together ---
+
 
 # Roman to Arabic
 @app.post("/rom-to-ar/{inp}")
