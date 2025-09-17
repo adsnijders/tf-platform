@@ -14,5 +14,8 @@ COPY ./ .
 # Sync all dependencies with uv
 RUN uv sync
 
+# Optional: install your local project in editable mode so changes are used directly
+RUN uv pip install -e .
+
 # Excecute command
 CMD ["uv" , "run", "uvicorn", "roman_api.main:app", "--host", "0.0.0.0", "--port", "8080"]
