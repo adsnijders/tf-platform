@@ -160,7 +160,6 @@ def val_rom_inp(rom_inp: str) -> None:
         raise ValueError("Input contains invalid Roman numeral")
     
 
-
 # Define a function to validate the Arabic input
 def val_ar_inp(ar_inp: str | int) -> None:
     """
