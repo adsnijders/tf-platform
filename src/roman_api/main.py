@@ -158,7 +158,7 @@ def val_rom_inp(rom_inp: str) -> None:
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
         raise ValueError("Input contains invalid Roman numeral")
-    
+
 
 # Define a function to validate the Arabic input
 def val_ar_inp(ar_inp: str | int) -> None:
