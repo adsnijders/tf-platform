@@ -14,5 +14,11 @@ COPY ./ .
 # Sync all dependencies with uv
 RUN uv sync
 
+# # TEST: install your local project in editable mode so changes are used directly
+# RUN uv pip install -e .
+
+# # TEST: uv pip install git repo
+# RUN uv pip install "git+https://github.com/adsnijders/number_converter.git"
+
 # Excecute command
 CMD ["uv" , "run", "uvicorn", "roman_api.main:app", "--host", "0.0.0.0", "--port", "8080"]

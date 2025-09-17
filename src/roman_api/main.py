@@ -14,23 +14,24 @@ from roman_converter.cli import ar_to_rom_conv, rom_to_ar_conv
 
 
 # Function for creating the postgres-db connection
-def get_db_connection():
+def get_db_connection() -> None:
     """
     Connects to the postgres db.
     """
     try:
         conn = psycopg2.connect(
-            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket
+            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket; POSTGRES_NAME
             # port=os.getenv("POSTGRES_PORT"),
             dbname=os.getenv("POSTGRES_NAME"),
             user=os.getenv("POSTGRES_USER"),
             password=os.getenv("POSTGRES_PASSWORD"),
         )
 
+        print("✅ Succesfully connected to the database!")
         return conn, conn.cursor()
 
     except Exception as e:
-        raise RuntimeError("Could not connect to the database") from e
+        raise RuntimeError("❌ Could not connect to the database!") from e
 
 
 # --- Creating functions that create a table that stores key-value pairs, post to it, and retrieve them ---
@@ -39,7 +40,7 @@ def get_db_connection():
 # Function for creating a table in postgres
 def init_db(conn, cur) -> None:
     """
-    Checks if table "roman" exists. If not, the tables is created.
+    Checks if table "roman" exists. If not, the table is created.
     """
     try:
         cur.execute(
@@ -52,10 +53,10 @@ def init_db(conn, cur) -> None:
         )
 
         conn.commit()
-        print("✅ Table 'roman' checked / created.")
+        print("✅ Table 'roman' checked / created!")
 
     except Exception as e:
-        raise RuntimeError("Table 'roman' could not be checked / created") from e
+        raise RuntimeError("❌ Table 'roman' could not be checked / created!") from e
 
 
 # Define a function get the value from postgres-db when the key exists
@@ -77,14 +78,15 @@ def get_value_if_key_exists(cur, inp: str | int) -> None | str:
     rows = cur.fetchall()
 
     if len(rows) > 0:
-        # print(rows)
+        print(f"✅ Key {inp} was found in table roman!")
         return rows[0][0]
     else:
+        print(f"❌ Key {inp} was NOT found in table roman!")
         return None
 
 
 # Define a function that posts the key-value pair into postgres-db
-def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
+def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str) -> None:
     """
     Inserts the key-value pair in postgres-db.
     """
@@ -98,77 +100,62 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
             (inp, out),
         )
         conn.commit()
-        print(f"✅ Values ({inp}, {out}) have been inserted into table roman.")
+        print(f"✅ Values ({inp}, {out}) have been inserted into table roman!")
 
     except Exception as e:
-        raise RuntimeError(f"Could not insert ({inp}, {out})") from e
+        raise RuntimeError(
+            f"❌ Could not insert ({inp}, {out}) into table roman!"
+        ) from e
 
-
-# --- Create mappings ---
-
-# Define Roman to Arabic mapping
-rom_to_ar = {
-    "i": 1,
-    "iv": 4,
-    "v": 5,
-    "ix": 9,
-    "x": 10,
-    "xl": 40,
-    "l": 50,
-    "xc": 90,
-    "c": 100,
-    "cd": 400,
-    "d": 500,
-    "cm": 900,
-    "m": 1000,
-}
-
-# Define Arabic to Roman mapping
-ar_to_rom = {ar_nr: rom_nr for rom_nr, ar_nr in rom_to_ar.items()}
 
 # --- Creating functions that validate input ---
 
 
 # Define a function to validate the Roman input
-def val_rom_inp(rom_inp: str) -> None:
+def val_rom_inp(rom_inp: str) -> str:
     """
-    Validate the input for rom_to_ar_conv
+    Validates the input for rom_to_ar_conv.
     """
     # The input must be a string
     if not isinstance(rom_inp, str):
-        raise TypeError("Input must be a string")
+        raise TypeError("❌ Input must be a string!")
 
     # Convert the input to lowercase
-    rom_inp = rom_inp.lower()
+    rom_inp = rom_inp.lower().strip()
 
     # Reject more than 3 of the same numeral in a row
     if re.search(r"(i{4,}|x{4,}|c{4,}|m{4,})", rom_inp):
         raise ValueError(
-            "Invalid Roman numeral: cannot repeat the same numeral for more than three times"
+            "❌ Invalid Roman numeral: cannot repeat the same numeral for more than three times!"
         )
 
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
-        raise ValueError("Input contains invalid Roman numeral")
+        raise ValueError("❌ Input contains invalid Roman numeral!")
+
+    # Input is valid
+    print("✅ Input is valid!")
+    return rom_inp
 
 
 # Define a function to validate the Arabic input
-def val_ar_inp(ar_inp: str | int) -> None:
+def val_ar_inp(ar_inp: str | int) -> int:
     """
-    Validate the input for ar_to_rom_conv
+    Validates the input for ar_to_rom_conv.
     """
     # The input must be an integer or a string convertible to an integer
     try:
-        ar_inp = int(ar_inp.lower().strip())
+        ar_inp = int(str(ar_inp).lower().strip())
     except Exception as e:
         raise TypeError(
-            "Input must be an integer or a string convertible to an integer"
+            "❌ Input must be an integer or a string convertible to an integer!"
         ) from e
 
     # inp_nr cannot be negative
     if ar_inp <= 0 or ar_inp >= 4000:
-        raise ValueError("Roman numerals must be positive integers and below 4000")
+        raise ValueError("❌ Roman numerals must be positive integers and below 4000!")
 
+    print("✅ Input is valid!")
     return ar_inp
 
 
@@ -184,15 +171,15 @@ app = FastAPI()
 @app.post("/rom-to-ar/{inp}")
 def get_ar_output(inp):
     """
-    1. Validate the roman input
+    1. Validate the roman input.
     2. Tries to create a connection to postgres.
     3. Checks if table roman exists.
     4. Tries to find inp in the postgres-db and immediately return the associated value.
-    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion.
     """
     # --- 1. Validate the roman input ---
 
-    val_rom_inp(inp)
+    inp = val_rom_inp(inp)
 
     # --- 2. Connect to postgres ---
 
@@ -204,10 +191,8 @@ def get_ar_output(inp):
 
     # --- 4. Try to find inp in postgres-db
 
-    inp = str(inp).lower().strip()
     db_value = get_value_if_key_exists(cur, inp)
     if db_value:
-        print(f"Key {inp} is found in postgres")
         print(f"Arabic number: {db_value}")
         return JSONResponse(content={"Arabic number": db_value})
 
@@ -228,15 +213,15 @@ def get_ar_output(inp):
 @app.post("/ar-to-rom/{inp}")
 def get_rom_output(inp):
     """
-    1. Validate the arabic input
+    1. Validate the arabic input.
     2. Tries to create a connection to postgres.
     3. Checks if table roman exists.
     4. Tries to find inp in the postgres-db and immediately return the associated value.
-    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion
+    5. (Optional) If not present, it converts the input, posts the input-output in postgres-db and returns the conversion.
     """
     # --- 1. Validate the roman input ---
 
-    val_ar_inp(inp)
+    inp = val_ar_inp(inp)
 
     # --- 2. Connect to postgres ---
 
@@ -248,10 +233,8 @@ def get_rom_output(inp):
 
     # --- 4. Try to find inp in postgres-db
 
-    inp = str(inp).lower().strip()
-    db_value = get_value_if_key_exists(cur, inp)
+    db_value = get_value_if_key_exists(cur, str(inp))
     if db_value:
-        print(f"Key {inp} is found in postgres")
         print(f"Roman number: {db_value}")
         return JSONResponse(content={"Roman number": db_value})
 
@@ -259,7 +242,7 @@ def get_rom_output(inp):
 
     conv = ar_to_rom_conv(inp)
 
-    post_value_if_key_does_not_exist(conn, cur, inp, conv)
+    post_value_if_key_does_not_exist(conn, cur, str(inp), conv)
 
     cur.close()
     conn.close()
@@ -271,3 +254,9 @@ def get_rom_output(inp):
 # Main guard
 if __name__ == "__main__":
     app()
+
+    # # Checks
+    # rom_to_ar = rom_to_ar_conv("CX")
+    # print(type(rom_to_ar), rom_to_ar)
+    # ar_to_rom = ar_to_rom_conv(100)
+    # print(type(ar_to_rom), ar_to_rom)

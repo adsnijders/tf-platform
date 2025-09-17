@@ -4,7 +4,7 @@ on: # Defines what will trigger the workflow
   # push: # This will run the action whenever you push to the repo
   #   branches: # Makes sure the workflow runs whenever something is pushed to certain branches
   #     - master
-  pull_request:
+  pull_request: # This will run the action whenever you make a pull request
     branches:
       - master
 
@@ -67,14 +67,14 @@ jobs: # What should the workflow do?
           echo "Configuring docker"
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet        
 
-      # Step 9: Build and push the docker image
+      # Step 9: Build and push the docker image (I added --no-cache later)
       - name: Docker Build and Push
         env: 
           IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
         run: |
           echo "Building image: $IMAGE"
-          docker build -t $IMAGE .
-          echo "Pusing image: $IMAGE"
+          docker build --no-cache -t $IMAGE .
+          echo "Pushing image: $IMAGE"
           docker push $IMAGE
 
       # Step 10: Setting up Terraform

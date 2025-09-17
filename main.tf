@@ -65,16 +65,6 @@ resource "google_cloud_run_v2_service" "api_service" {
   template {
     containers {
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.artifact_repo_id}/${var.image_name}:latest"
-      
-      # env {
-      #   name  = "POSTGRES_HOST"
-      #   value = google_sql_database_instance.instance.public_ip_address 
-      # }
-
-      # env {
-      #   name  = "POSTGRES_PORT"
-      #   value = 5432
-      # }
 
       env {
         name  = "POSTGRES_NAME"
@@ -96,6 +86,7 @@ resource "google_cloud_run_v2_service" "api_service" {
         value = google_sql_database_instance.instance.connection_name
       }
 
+      # Mount
       volume_mounts {
         name = "cloudsql"
         mount_path = "/cloudsql"
@@ -112,19 +103,19 @@ resource "google_cloud_run_v2_service" "api_service" {
   }
 }
 
-# ---------------------------
-# Resource: iam binding
-# ---------------------------
-resource "google_cloud_run_service_iam_binding" "binding" {
-  location  = google_cloud_run_v2_service.api_service.location
-  project   = var.project_id
-  service   = google_cloud_run_v2_service.api_service.name
-  role      = "roles/run.invoker"
-  members   = [
-    "user:asnijders@xccelerated.io",
-    "user:gclark@xccelerated.io"
-  ]
-}
+# # ---------------------------
+# # Resource: iam binding
+# # ---------------------------
+# resource "google_cloud_run_service_iam_binding" "binding" {
+#   location  = google_cloud_run_v2_service.api_service.location
+#   project   = var.project_id
+#   service   = google_cloud_run_v2_service.api_service.name
+#   role      = "roles/run.invoker"
+#   members   = [
+#     "user:asnijders@xccelerated.io",
+#     "user:gclark@xccelerated.io"
+#   ]
+# }
 
 # ---------------------------
 # Resource: iam member
