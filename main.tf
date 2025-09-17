@@ -107,3 +107,14 @@ resource "google_cloud_run_service_iam_binding" "binding" {
     "user:gclark@xccelerated.io"
   ]
 }
+
+# ---------------------------
+# Resource: iam member
+# ---------------------------
+resource "google_cloud_run_service_iam_member" "public" {
+  location  = google_cloud_run_v2_service.api_service.location
+  project   = var.project_id
+  service   = google_cloud_run_v2_service.api_service.name
+  role      = "roles/run.invoker"
+  member    = "allUsers"
+}
