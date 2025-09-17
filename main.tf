@@ -96,6 +96,7 @@ resource "google_cloud_run_v2_service" "api_service" {
         value = google_sql_database_instance.instance.connection_name
       }
 
+      # Mount
       volume_mounts {
         name = "cloudsql"
         mount_path = "/cloudsql"
