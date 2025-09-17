@@ -4,7 +4,7 @@ on: # Defines what will trigger the workflow
   # push: # This will run the action whenever you push to the repo
   #   branches: # Makes sure the workflow runs whenever something is pushed to certain branches
   #     - master
-  pull_request:
+  pull_request: # This will run the action whenever you make a pull request
     branches:
       - master
 
