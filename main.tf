@@ -73,7 +73,7 @@ resource "google_cloud_run_v2_service" "api_service" {
 
       env {
         name  = "POSTGRES_PORT"
-        value = "5432"
+        value = 5432
       }
 
       env {
