@@ -78,7 +78,7 @@ resource "google_cloud_run_v2_service" "api_service" {
 
       env {
         name  = "POSTGRES_NAME"
-        value = google_sql_database_instance.instance.name
+        value = google_sql_database.database.name
       }
       
       env {
