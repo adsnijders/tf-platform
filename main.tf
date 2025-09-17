@@ -93,3 +93,16 @@ resource "google_cloud_run_v2_service" "api_service" {
     }
   }
 }
+
+# ---------------------------
+# Resource: iam binding
+# ---------------------------
+resource "google_cloud_run_service_iam_binding" "binding" {
+  location = google_cloud_run_v2_service.api_service.location
+  project = google_cloud_run_v2_service.api_service.project
+  service = google_cloud_run_v2_service.api_service.name
+  role = "roles/run.invoker"
+  members = [
+    "user:asnijders@xccelerated.io",
+  ]
+}
