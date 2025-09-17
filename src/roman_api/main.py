@@ -192,6 +192,7 @@ def get_ar_output(inp):
     # --- 5. Convert the input, post the input-output in postgres-db and return the conversion
 
     conv = rom_to_ar_conv(inp)
+    print(conv)
 
     post_value_if_key_does_not_exist(conn, cur, inp, conv)
 
@@ -236,6 +237,7 @@ def get_rom_output(inp):
     # --- 5. Convert the input, post the input-output in postgres-db and return the conversion
 
     conv = ar_to_rom_conv(inp)
+    print(conv)
 
     post_value_if_key_does_not_exist(conn, cur, inp, conv)
 
