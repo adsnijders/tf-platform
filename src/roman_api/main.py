@@ -132,7 +132,7 @@ def val_rom_inp(rom_inp: str) -> str:
     # Allow only valid characters
     if not re.fullmatch(r"[ivxlcdm]+", rom_inp):
         raise ValueError("❌ Input contains invalid Roman numeral!")
-    
+
     # Input is valid
     print("✅ Input is valid!")
     return rom_inp
