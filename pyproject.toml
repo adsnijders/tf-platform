@@ -9,7 +9,7 @@ dependencies = [
     "psycopg2-binary",
     "python-dotenv",
     "numpy",
-    "roman_converter @ git+https://github.com/adsnijders/number_converter.git"
+    "roman_converter @ git+https://github.com/adsnijders/number_converter.git" # May need to change
 ]
 
 [tool.hatch.build]
