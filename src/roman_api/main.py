@@ -20,7 +20,7 @@ def get_db_connection():
     """
     try:
         conn = psycopg2.connect(
-            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket; POSTGRES_NAME
+            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket; POSTGRES_NAME 
             # port=os.getenv("POSTGRES_PORT"),
             dbname=os.getenv("POSTGRES_NAME"),
             user=os.getenv("POSTGRES_USER"),
@@ -103,28 +103,6 @@ def post_value_if_key_does_not_exist(conn, cur, inp: str, out: str):
     except Exception as e:
         raise RuntimeError(f"Could not insert ({inp}, {out})") from e
 
-
-# --- Create mappings ---
-
-# Define Roman to Arabic mapping
-rom_to_ar = {
-    "i": 1,
-    "iv": 4,
-    "v": 5,
-    "ix": 9,
-    "x": 10,
-    "xl": 40,
-    "l": 50,
-    "xc": 90,
-    "c": 100,
-    "cd": 400,
-    "d": 500,
-    "cm": 900,
-    "m": 1000,
-}
-
-# Define Arabic to Roman mapping
-ar_to_rom = {ar_nr: rom_nr for rom_nr, ar_nr in rom_to_ar.items()}
 
 # --- Creating functions that validate input ---
 
