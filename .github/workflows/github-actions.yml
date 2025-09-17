@@ -77,8 +77,8 @@ jobs: # What should the workflow do?
         with:
           terraform_version: 1.12.2  # <-- match the version you want
 
-      # Step 11: Initializing and planning Terrafrom
-      - name: Terraform init and plan
+      # Step 11: Initializing, planning and applying Terrafrom
+      - name: Terraform init, plan, and apply
         working-directory: ./
         run: |
           echo "Initializing Terraform"
