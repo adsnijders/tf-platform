@@ -20,7 +20,7 @@ def get_db_connection():
     """
     try:
         conn = psycopg2.connect(
-            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}", # <- Unix socket
+            host=f"/cloudsql/{os.getenv("INSTANCE_CONNECTION_NAME")}",  # <- Unix socket
             # port=os.getenv("POSTGRES_PORT"),
             dbname=os.getenv("POSTGRES_NAME"),
             user=os.getenv("POSTGRES_USER"),
