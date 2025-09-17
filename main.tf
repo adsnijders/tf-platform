@@ -95,6 +95,11 @@ resource "google_cloud_run_v2_service" "api_service" {
         name  = "INSTANCE_CONNECTION_NAME"
         value = google_sql_database_instance.instance.connection_name
       }
+
+      volume_mounts {
+        name = "cloudsql"
+        mount_path = "/cloudsql"
+      }
     }
 
     # Enable Cloud SQL Auth Proxy
