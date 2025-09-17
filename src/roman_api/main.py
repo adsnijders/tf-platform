@@ -1,9 +1,10 @@
 # --- Importing modules and loading env variables
 
-# Import modules
+# Standard libs
 import os
 import re
 
+# External libs
 import psycopg2
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
