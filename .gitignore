@@ -226,4 +226,7 @@ pip-selfcheck.json
 ### GCP ###
 key.json
 
+### Logs ###
+*.DS_Store
+
 # End of https://www.toptal.com/developers/gitignore/api/python,terraform,dotenv,venv
